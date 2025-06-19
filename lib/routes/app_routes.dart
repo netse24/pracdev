@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:procdev/screens/account_screent.dart';
 import 'package:procdev/screens/home_screen.dart';
 import 'package:procdev/screens/main_screen.dart';
 import 'package:procdev/screens/splash_screen.dart';
@@ -15,6 +16,7 @@ class AppRoute {
   static const String otp = '/otp';
   static const String otpConfirm = '/otpConfirm';
   static const String main = '/main';
+  static const String account = '/account';
 
   static final key = GlobalKey<NavigatorState>();
 
@@ -35,6 +37,8 @@ class AppRoute {
         return _buildRoute(settings, OtpConfirmScreen());
       case main:
         return _buildRoute(settings, MainScreen());
+      case account:
+        return _buildRoute(settings, AccountScreent());
       default:
         throw Exception('Route not found: ${settings.name}');
     }

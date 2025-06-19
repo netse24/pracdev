@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:procdev/data/shared_pref_data.dart';
 import 'package:procdev/routes/app_routes.dart';
 import 'package:procdev/widgets/logo_widget.dart';
 import 'package:procdev/widgets/social_widget.dart';
@@ -14,11 +15,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isObscureText = true;
   bool _isEmailValid = false;
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _fullNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Register'),
+          title: Center(child: const Text('Login')),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
         ),
         body: Form(
             key: _formKey,
@@ -46,6 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget get _fullNameTextFormField {
     return TextFormField(
+      controller: _fullNameController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your full name';
@@ -67,6 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget get _emailTextFormField {
     return TextFormField(
+      controller: _emailController,
       onChanged: (value) => {
         setState(() {
           _isEmailValid = RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value);
@@ -96,6 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget get _passwordTextFormField {
     return TextFormField(
+      controller: _passwordController,
       obscureText: _isObscureText,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -140,8 +150,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
-            // Perform login action
-            AppRoute.key.currentState?.pushReplacementNamed(AppRoute.home);
+            String email = _emailController.text;
+            String password = _passwordController.text;
+            String fullName = _fullNameController.text;
+
+            SharedPrefData.register(email, password, fullName);
+            AppRoute.key.currentState?.pushReplacementNamed(AppRoute.main);
           }
         },
         style: ElevatedButton.styleFrom(
@@ -161,11 +175,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget get _navigateToLoginButton {
     return TextButton(
       onPressed: () {
-        // Navigator.pushNamed(context, "/login");
         AppRoute.key.currentState?.pushNamed(AppRoute.login);
       },
       child: const Text(
-        "I don't have account yet? Login",
+        "I already have an account. Login",
         style: TextStyle(color: Colors.blue),
       ),
     );

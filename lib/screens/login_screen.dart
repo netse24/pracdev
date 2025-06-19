@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:procdev/data/shared_pref_data.dart';
 import 'package:procdev/routes/app_routes.dart';
 import 'package:procdev/widgets/logo_widget.dart';
 import 'package:procdev/widgets/social_widget.dart';
@@ -15,11 +16,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isObscureText = true;
   bool _isEmailValid = false;
 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: Center(child: const Text('Login')),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
         ),
         body: Form(
             key: _formKey,
@@ -45,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget get _emailTextFormField {
     return TextFormField(
+      controller: _emailController,
       onChanged: (value) => {
         setState(() {
           _isEmailValid = RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value);
@@ -74,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget get _passwordTextFormField {
     return TextFormField(
+      controller: _passwordController,
       obscureText: _isObscureText,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -119,7 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
             // Perform login action
-            AppRoute.key.currentState?.pushReplacementNamed(AppRoute.home);
+            String email = _emailController.text;
+            String password = _passwordController.text;
+
+            SharedPrefData.login(email, password);
+            AppRoute.key.currentState?.pushReplacementNamed(AppRoute.main);
           }
         },
         style: ElevatedButton.styleFrom(

@@ -23,11 +23,11 @@ class SplashScreen extends StatelessWidget {
                       AppRoute.key.currentState
                           ?.pushReplacementNamed(AppRoute.login);
                     },
-                    child: Text("Create Account",
-                        style: TextStyle(fontSize: 16, color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                    ))),
+                    ),
+                    child: Text("Create Account",
+                        style: TextStyle(fontSize: 16, color: Colors.white)))),
             SizedBox(height: 10),
             SizedBox(
                 height: 40,
@@ -35,7 +35,7 @@ class SplashScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     AppRoute.key.currentState
-                        ?.pushReplacementNamed(AppRoute.home);
+                        ?.pushReplacementNamed(AppRoute.main);
                   },
                   child: Text("Login as Guest",
                       style: TextStyle(fontSize: 16, color: Colors.red)),
