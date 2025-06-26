@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+// import 'package:procdev/data/file_storage_data.dart';
 import 'package:procdev/routes/app_routes.dart';
 // import 'package:procdev/screens/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(App());
+
+  // FileStorageData.readDataFromFile();
+  // FileStorageData.writeDataToFile("Hello, World!");
+
+  final app = App();
+
+  runApp(app);
 }
 
 class App extends StatelessWidget {

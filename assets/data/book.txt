@@ -1,0 +1,6 @@
+bookId=0,price=2000.0,qty=1,discount=200.0
+bookId=0,price=2000.0,qty=1,discount=200.0
+bookId=2,price=2000.0,qty=1,discount=200.0
+bookId=0,price=2000.0,qty=1,discount=200.0
+bookId=0,price=2000.0,qty=1,discount=200.0
+bookId=0,price=2000.0,qty=1,discount=200.0
