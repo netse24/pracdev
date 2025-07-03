@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:procdev/data/file_storage_data.dart';
 import 'package:procdev/data/shared_pref_data.dart';
+import 'package:procdev/model/book.dart';
 import 'package:procdev/routes/app_routes.dart';
+import 'package:procdev/services/book_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -15,6 +17,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? fullName;
   int _cartTotal = 0;
+
+  List<Book> _books = [];
+  // ignore: unused_field, prefer_final_fields
   bool _isLoggedIn = false;
 
   @override
@@ -22,8 +27,28 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadData();
     _loadCartOrder();
+    _getBooks();
   }
+  Future<void> _getBooks() async{
+      final bookService = BookService();
+      for(int i = 0; i < 4; i++){
+        final book = Book(
+          title: "Book $i",
+          author: "Author $i",
+          description: "Description $i",
+          price: 200,
+          discount: 10,
 
+        );
+        bookService.insertBook(book);
+      }
+      List<Book> books = await bookService.getBooks();
+
+      print("Books: ${books.length}");
+      setState(() {
+        _books = books;
+      });
+  }
   Future<void> _loadCartOrder() async {
     // Option 1
     //List<String> data = await FileStorageData.readDataFromFile();
@@ -96,10 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget get _bookListWidget {
-    List<Widget> _bookItems = List.generate(
-      10,
-      (index) => _bookCartItem(index),
-    ).toList();
+    // List<Widget> _bookItems = List.generate(
+    //   10,
+    //   (index) => _bookCartItem(index),
+    // ).toList();
+
+    List<Widget> _bookItems = _books.map((e) => _bookCartItem(e)).toList();
 
     // Option 1  : Using ListView
 
@@ -126,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  Widget _bookCartItem(int bookId) {
+  Widget _bookCartItem(Book book) {
     return Card(
       child: Column(
         children: [
@@ -153,10 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       );
                       _orderBook(
-                          bookId: bookId,
-                          price: 2000.0,
+                          bookId: book.id,
+                          price: book.price,
                           qty: 1,
-                          discount: 200.0);
+                          discount:book.discount);
 
                       showDialog(context: context, builder: (context) => alert);
                     }

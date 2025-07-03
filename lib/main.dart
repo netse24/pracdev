@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:procdev/data/file_storage_data.dart';
+import 'package:procdev/data/sqflite_db_data.dart';
 import 'package:procdev/routes/app_routes.dart';
 // import 'package:procdev/screens/home_screen.dart';
 
@@ -9,8 +9,10 @@ void main() {
   // FileStorageData.readDataFromFile();
   // FileStorageData.writeDataToFile("Hello, World!");
 
-  final app = App();
+  // Initialize the database
+  SqfliteDbData.instance.database;
 
+  final app = App();
   runApp(app);
 }
 
