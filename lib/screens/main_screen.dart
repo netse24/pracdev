@@ -33,25 +33,35 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
+        backgroundColor: Color(0xFFFFE5EC),
+        selectedItemColor: Color(0xFFF275A7),
         unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.red,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.grey),
+            activeIcon: Icon(Icons.home, color: Color(0xFFF275A7)),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorite',
+            icon: Icon(Icons.category, color: Colors.grey),
+            activeIcon: Icon(Icons.category, color: Color(0xFFF275A7)),
+            label: 'Category',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.article, color: Colors.grey),
+            activeIcon: Icon(Icons.article, color: Color(0xFFF275A7)),
+            label: 'News',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart, color: Colors.grey),
+            activeIcon: Icon(Icons.shopping_cart, color: Color(0xFFF275A7)),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.account_circle, color: Colors.grey),
+            activeIcon: Icon(Icons.account_circle, color: Color(0xFFF275A7)),
             label: 'Account',
           ),
         ],
