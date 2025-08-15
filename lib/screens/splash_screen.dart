@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // Import GetX
-import 'package:procdev/screens/home_screen.dart'; // Assuming HomeScreen is your main destination
+import 'package:procdev/screens/main_screen.dart'; // Assuming HomeScreen is your main destination
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -39,7 +39,7 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Description Text
-             RichText(
+            RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
                 style: TextStyle(
@@ -51,10 +51,12 @@ class SplashScreen extends StatelessWidget {
                   TextSpan(text: "Welcome to "),
                   TextSpan(
                     text: "Online B.U.T Store.",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF275A7)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Color(0xFFF275A7)),
                   ),
                   TextSpan(
-                      text: " We are thrilled to have you here and truly appreciate your visit. Whether you are exploring our products, looking for information, or just browsing, we hope you have a great experience."),
+                      text:
+                          " We are thrilled to have you here and truly appreciate your visit. Whether you are exploring our products, looking for information, or just browsing, we hope you have a great experience."),
                 ],
               ),
             ),
@@ -72,7 +74,8 @@ class SplashScreen extends StatelessWidget {
                   // Wrapping in Future.delayed ensures the navigation happens after
                   // the current frame is built and the GetX navigation context is fully ready.
                   Future.delayed(const Duration(milliseconds: 100), () {
-                    Get.offAll(() => const HomeScreen()); // Replaces all routes with HomeScreen
+                    Get.offAll(() =>
+                        const MainScreen()); // Replaces all routes with HomeScreen
                   });
                 },
                 style: ElevatedButton.styleFrom(
@@ -83,7 +86,10 @@ class SplashScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   "GET STARTED",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
             ),

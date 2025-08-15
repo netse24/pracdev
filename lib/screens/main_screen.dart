@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:procdev/screens/account_screent.dart';
 import 'package:procdev/screens/cart_screen.dart';
-import 'package:procdev/screens/favorite_screen.dart';
 import 'package:procdev/screens/home_screen.dart';
+import 'package:procdev/screens/category_screen.dart';
+import 'package:procdev/screens/news_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,17 +15,20 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
+  final List<Widget> _screens = [
+    HomeScreen(),
+    CategoryScreen(),
+    NewsScreen(),
+    CartScreen(),
+    AccountScreent()
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: [
-          HomeScreen(),
-          FavoriteScreen(),
-          CartScreen(),
-          AccountScreent()
-        ],
+        children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -33,35 +37,32 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
-        backgroundColor: Color(0xFFFFE5EC),
-        selectedItemColor: Color(0xFFF275A7),
+        backgroundColor: const Color(0xFFFFE5EC),
+        selectedItemColor: const Color(0xFFF275A7),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        items: [
+        // Explicitly set the type to fixed for consistent behavior
+        type: BottomNavigationBarType.fixed,
+        items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.grey),
-            activeIcon: Icon(Icons.home, color: Color(0xFFF275A7)),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.category, color: Colors.grey),
-            activeIcon: Icon(Icons.category, color: Color(0xFFF275A7)),
+            icon: Icon(Icons.category),
             label: 'Category',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.article, color: Colors.grey),
-            activeIcon: Icon(Icons.article, color: Color(0xFFF275A7)),
+            icon: Icon(Icons.article),
             label: 'News',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart, color: Colors.grey),
-            activeIcon: Icon(Icons.shopping_cart, color: Color(0xFFF275A7)),
+            icon: Icon(Icons.shopping_cart),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle, color: Colors.grey),
-            activeIcon: Icon(Icons.account_circle, color: Color(0xFFF275A7)),
+            icon: Icon(Icons.account_circle),
             label: 'Account',
           ),
         ],
