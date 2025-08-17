@@ -1,39 +1,67 @@
+import 'package:get/get.dart';
+import 'config/app_routes.dart';
+import 'config/firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:procdev/data/sqflite_db_data.dart';
-import 'package:procdev/routes/app_routes.dart';
-// import 'package:procdev/screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'database/product_database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'features/products/services/product_service.dart';
+import 'features/shopping_cart/services/cart_service.dart';
+import 'features/authentication/screens/splash_screen.dart';
 
-void main() {
+// ====================================================================
+// File: lib/main.dart
+// Main entry point of the application.
+// ====================================================================
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // FileStorageData.readDataFromFile();
-  // FileStorageData.writeDataToFile("Hello, World!");
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  // Initialize the database
-  SqfliteDbData.instance.database;
+  // Initialize sqflite FFI for Windows
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi; // Must be set before using the database
 
-  final app = App();
-  runApp(app);
+  // Initialize SQLite database
+  await ProductDatabase.instance.init();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductService()),
+        ChangeNotifierProvider(create: (_) => CartService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PracDev',
+    return GetMaterialApp(
+      title: 'Online B.U.T Store',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.pink,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Inter',
+        appBarTheme: const AppBarTheme(
+          color: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          titleTextStyle: TextStyle(
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ),
-      // home: HomeScreen(),
-
-      initialRoute: AppRoute.splash,
-      onGenerateRoute: AppRoute.generateRoute,
-      debugShowCheckedModeBanner: false,
-      navigatorKey: AppRoute.key,
+      initialRoute: AppRoutes.splash,
+      getPages: AppRoutes.routes,
     );
   }
 }
