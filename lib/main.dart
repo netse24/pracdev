@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'config/app_routes.dart';
-import 'config/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'database/product_database.dart';
@@ -8,8 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'features/products/services/product_service.dart';
 import 'features/shopping_cart/services/cart_service.dart';
-import 'features/authentication/screens/splash_screen.dart';
-
 // ====================================================================
 // File: lib/main.dart
 // Main entry point of the application.
@@ -18,17 +15,20 @@ import 'features/authentication/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Initialize sqflite FFI for Windows
+  // ✅ Initialize sqflite for Windows/Linux/macOS
   sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi; // Must be set before using the database
+  databaseFactory = databaseFactoryFfi;
+
+  // Initialize Firebase (uncomment when firebase_options.dart is available)
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
 
   // Initialize SQLite database
   await ProductDatabase.instance.init();
+
+  // ✅ Insert demo products if table is empty
+  await ProductDatabase.instance.insertDemoProductsIfEmpty();
 
   runApp(
     MultiProvider(
@@ -57,11 +57,14 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
           titleTextStyle: TextStyle(
-              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-      initialRoute: AppRoutes.splash,
-      getPages: AppRoutes.routes,
+      initialRoute: AppRoute.splash,
+      getPages: AppRoute.routes,
     );
   }
 }

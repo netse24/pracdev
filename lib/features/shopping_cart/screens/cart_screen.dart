@@ -1,12 +1,6 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import 'package:provider/provider.dart';
-
-// ====================================================================
-// File: lib/features/shopping_cart/screens/cart_screen.dart
-// The shopping cart screen.
-// ====================================================================
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -17,65 +11,27 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Cart'),
+        title: const Text("Shopping Cart", style: TextStyle(color: Colors.pink)),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: cartService.cartItems.isEmpty
-                ? const Center(child: Text('Your cart is empty.'))
-                : ListView.builder(
-                    itemCount: cartService.cartItems.length,
-                    itemBuilder: (context, index) {
-                      final product = cartService.cartItems[index];
-                      return Dismissible(
-                        key: Key(product.id.toString()),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          cartService.removeItem(product.id);
-                          Get.snackbar('Item Removed', '${product.name} removed from cart.');
-                        },
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        child: Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: ListTile(
-                            leading: Image.network(product.imageUrl, width: 50, height: 50, fit: BoxFit.cover),
-                            title: Text(product.name),
-                            subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-                          ),
-                        ),
-                      );
-                    },
+      body: cartService.cartItems.isEmpty
+          ? const Center(child: Text("Your cart is empty"))
+          : ListView.builder(
+              itemCount: cartService.cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartService.cartItems[index];
+                return ListTile(
+                  leading: Image.asset(item['image'], width: 50, height: 50),
+                  title: Text(item['name']),
+                  subtitle: Text("\$${item['price']}"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => cartService.removeItem(item['id']),
                   ),
-          ),
-          if (cartService.cartItems.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.snackbar('Checkout', 'Proceeding to checkout...');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  'Checkout (${cartService.cartItems.length} items)',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ),
+                );
+              },
             ),
-        ],
-      ),
     );
   }
 }

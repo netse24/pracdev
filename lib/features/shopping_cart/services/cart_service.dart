@@ -1,41 +1,30 @@
-import '../../../models/product.dart';
 import 'package:flutter/material.dart';
-import '../../../database/product_database.dart';
-
-// ====================================================================
-// File: lib/features/shopping_cart/services/cart_service.dart
-// Manages the state of the shopping cart.
-// ====================================================================
 
 class CartService extends ChangeNotifier {
-  List<Product> _cartItems = [];
-  final _db = ProductDatabase.instance;
+  final List<Map<String, dynamic>> _cartItems = [];
 
-  List<Product> get cartItems => _cartItems;
+  List<Map<String, dynamic>> get cartItems => _cartItems;
 
-  CartService() {
-    _loadCartItems();
-  }
-
-  void _loadCartItems() async {
-    final productsFromDb = await _db.getProducts();
-    _cartItems = productsFromDb.map((map) => Product.fromMap(map)).toList();
+  void addItem(Map<String, dynamic> product) {
+    // Check if product already in cart
+    final index = _cartItems.indexWhere((p) => p['id'] == product['id']);
+    if (index == -1) {
+      _cartItems.add(product);
+    } else {
+      // Optional: update quantity
+      _cartItems[index]['quantity'] =
+          (_cartItems[index]['quantity'] ?? 1) + 1;
+    }
     notifyListeners();
   }
 
-  void addItem(Product product) async {
-    // Check if the item already exists to avoid duplicates.
-    bool exists = _cartItems.any((cartItem) => cartItem.id == product.id);
-    if (!exists) {
-      await _db.insertProduct(product.toMap());
-      _cartItems.add(product);
-      notifyListeners();
-    }
+  void removeItem(int productId) {
+    _cartItems.removeWhere((p) => p['id'] == productId);
+    notifyListeners();
   }
 
-  void removeItem(int productId) async {
-    await _db.deleteAllProducts(); // Using this for simplicity. A better way would be `_db.deleteProduct(productId)`.
-    _cartItems.removeWhere((item) => item.id == productId);
+  void clearCart() {
+    _cartItems.clear();
     notifyListeners();
   }
 }

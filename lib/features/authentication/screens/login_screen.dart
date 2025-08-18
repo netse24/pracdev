@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final authService = Provider.of<AuthService>(context, listen: false);
       final success = await authService.signIn(_emailController.text, _passwordController.text);
       if (success) {
-        Get.offAllNamed(AppRoutes.main);
+        Get.offAllNamed(AppRoute.main);
       } else {
         Get.snackbar('Error', 'Invalid email or password');
       }
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.register);
+                  Get.toNamed(AppRoute.register);
                 },
                 child: const Text(
                   'Don\'t have an account? Sign Up',

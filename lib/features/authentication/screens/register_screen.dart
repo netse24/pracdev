@@ -32,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _passwordController.text,
       );
       if (success) {
-        Get.offAllNamed(AppRoutes.main);
+        Get.offAllNamed(AppRoute.main);
       } else {
         Get.snackbar('Error', 'Registration failed. Please try again.');
       }
@@ -147,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Get.offAllNamed(AppRoutes.login);
+                  Get.offAllNamed(AppRoute.login);
                 },
                 child: const Text(
                   'Already have an account? Sign In',

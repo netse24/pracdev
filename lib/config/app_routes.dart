@@ -9,12 +9,13 @@ import '../features/authentication/screens/login_screen.dart';
 import '../features/authentication/screens/splash_screen.dart';
 import '../features/authentication/screens/register_screen.dart';
 import '../features/products/screens/product_detail_screen.dart';
+
 // ====================================================================
 // File: lib/config/app_routes.dart
 // Defines the named routes for the application.
 // ====================================================================
 
-class AppRoutes {
+class AppRoute {
   static const splash = '/';
   static const login = '/login';
   static const register = '/register';

@@ -35,7 +35,7 @@ class AccountScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 authService.signOut();
-                Get.offAllNamed(AppRoutes.login);
+                Get.offAllNamed(AppRoute.login);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
