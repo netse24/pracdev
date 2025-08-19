@@ -1,4 +1,5 @@
 import 'payment_screen.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import 'package:provider/provider.dart';
@@ -9,8 +10,8 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartService = Provider.of<CartService>(context);
+    final theme = Theme.of(context);
 
-    // Function to show confirmation dialog with product image
     void _confirmDelete(BuildContext context, CartService cartService, Map<String, dynamic> item) {
       showDialog(
         context: context,
@@ -47,43 +48,113 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Shopping Cart", style: TextStyle(color: Colors.pink)),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 1,
+        iconTheme: IconThemeData(color: theme.iconTheme.color),
+        title: Row(
+          children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/logo.jpg'),
+              radius: 25,
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Online B.U.T Store",
+                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Beauty with Us",
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       body: cartService.cartItems.isEmpty
-          ? const Center(child: Text("Your cart is empty"))
+          ? Center(
+              child: Text(
+                "Your cart is empty",
+                style: TextStyle(fontSize: 18, color: theme.textTheme.bodyMedium?.color),
+              ),
+            )
           : Column(
               children: [
                 Expanded(
                   child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
                     itemCount: cartService.cartItems.length,
                     itemBuilder: (context, index) {
                       final item = cartService.cartItems[index];
                       final quantity = item['quantity'] ?? 1;
                       final price = (item['price'] as num).toDouble();
 
-                      return ListTile(
-                        leading: Image.asset(item['image'], width: 50, height: 50, fit: BoxFit.cover),
-                        title: Text(item['name']),
-                        subtitle: Text('Price: \$${price.toStringAsFixed(2)}'),
-                        trailing: SizedBox(
-                          width: 180,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () => cartService.decreaseQuantity(item['id'])),
-                              Text('$quantity'),
-                              IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () => cartService.increaseQuantity(item['id'])),
-                              IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _confirmDelete(context, cartService, item)),
-                            ],
-                          ),
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.brightness == Brightness.dark
+                                  ? Colors.black54
+                                  : Colors.black12,
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                item['image'],
+                                width: 70,
+                                height: 70,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item['name'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.textTheme.bodyLarge?.color)),
+                                  const SizedBox(height: 4),
+                                  Text('\$${price.toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                          color: Colors.pink, fontWeight: FontWeight.w600)),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () =>
+                                              cartService.decreaseQuantity(item['id'])),
+                                      Text('$quantity', style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                                      IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () =>
+                                              cartService.increaseQuantity(item['id'])),
+                                      const Spacer(),
+                                      IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () =>
+                                              _confirmDelete(context, cartService, item)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -92,9 +163,14 @@ class CartScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)
+                    color: theme.cardColor,
+                    boxShadow: [
+                      BoxShadow(
+                          color: theme.brightness == Brightness.dark
+                              ? Colors.black54
+                              : Colors.black12,
+                          blurRadius: 4,
+                          spreadRadius: 2)
                     ],
                   ),
                   child: Column(

@@ -72,6 +72,7 @@ class _NewsScreenState extends State<NewsScreen> {
           children: [
             const CircleAvatar(
               backgroundImage: AssetImage('assets/images/logo.jpg'),
+              radius: 25,
             ),
             const SizedBox(width: 10),
             Column(

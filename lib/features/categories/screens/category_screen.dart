@@ -23,7 +23,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<void> loadProducts() async {
-    final products = await ProductDatabase.instance.getAllProducts(); // Fetch from DB
+    final products = await ProductDatabase.instance.getAllProducts();
     setState(() {
       allProducts = products;
       isLoading = false;
@@ -49,20 +49,46 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Categories", style: TextStyle(color: Colors.pink)),
         backgroundColor: Colors.white,
+        elevation: 1,
         iconTheme: const IconThemeData(color: Colors.black),
+        title: Row(
+          children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/logo.jpg'),
+              radius: 25,
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Online B.U.T Store",
+                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Beauty with Us",
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Browse Categories", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              "Browse Categories",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            SizedBox(
+              height: 60,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: categories.map((c) => categoryChip(c)).toList(),
               ),
             ),
@@ -99,7 +125,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
         },
         child: Chip(
           backgroundColor: isSelected ? Colors.pink : Colors.grey[300],
-          label: Text(label, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
+          label: Text(
+            label,
+            style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../models/product.dart';
 import 'package:flutter/material.dart';
 import '../../../config/app_routes.dart';
+import '../../../services/theme_service.dart';
 import 'package:procdev/database/product_database.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,41 +45,52 @@ class _HomeScreenState extends State<HomeScreen> {
         : allProducts.where((p) => p.category == selectedCategory).toList();
 
     // Get unique categories
-    List<String> categories = [
-      "All",
-      ...{for (var p in allProducts) p.category}
-    ];
+    List<String> categories = ["All", ...{for (var p in allProducts) p.category}];
+
+    // Detect dark mode for dynamic colors
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    Color background = isDark ? Colors.black : Colors.white;
+    Color cardBackground = isDark ? Colors.grey[900]! : Colors.white;
+    Color textColor = isDark ? Colors.white : Colors.black;
+    Color subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
 
     return Scaffold(
+      backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: background,
         elevation: 0,
         title: Row(
           children: [
             const CircleAvatar(
               backgroundImage: AssetImage('assets/images/logo.jpg'),
+              radius: 25,
             ),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   "Online B.U.T Store",
                   style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "Beauty with Us",
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                  style: TextStyle(fontSize: 12, color: subTextColor),
                 ),
               ],
             ),
           ],
         ),
         actions: [
+          // Dark Mode toggle button
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
+            icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode, color: textColor),
+            onPressed: () => ThemeService().switchTheme(),
+          ),
+          IconButton(
+            icon: Icon(Icons.notifications, color: textColor),
             onPressed: () {},
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -109,21 +121,21 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 18),
 
             // Category chips / slider
-            const Text("B.U.T Category",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("B.U.T Category",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
             const SizedBox(height: 10),
             SizedBox(
               height: 60,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: categories.map((c) => categoryChip(c)).toList(),
+                children: categories.map((c) => categoryChip(c, isDark)).toList(),
               ),
             ),
             const SizedBox(height: 20),
 
             // Popular products
-            const Text("Popular Now",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Popular Now",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
             const SizedBox(height: 10),
             GridView.builder(
               shrinkWrap: true,
@@ -134,10 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSpacing: 10,
                 childAspectRatio: 0.7,
               ),
-              // Show only first 4 products
               itemCount: filteredProducts.length > 4 ? 4 : filteredProducts.length,
               itemBuilder: (context, index) {
-                return productCard(filteredProducts[index]);
+                return productCard(filteredProducts[index], cardBackground, textColor);
               },
             ),
           ],
@@ -146,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget categoryChip(String label) {
+  Widget categoryChip(String label, bool isDark) {
     bool isSelected = label == selectedCategory;
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
@@ -157,17 +168,21 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         child: Chip(
-          backgroundColor: isSelected ? Colors.pink : Colors.grey[300],
+          backgroundColor: isSelected
+              ? Colors.pink
+              : isDark
+                  ? Colors.grey[800]
+                  : Colors.grey[300],
           label: Text(
             label,
-            style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+            style: TextStyle(color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black)),
           ),
         ),
       ),
     );
   }
 
-  Widget productCard(Product product) {
+  Widget productCard(Product product, Color bgColor, Color textColor) {
     return GestureDetector(
       onTap: () {
         Get.toNamed(AppRoute.productDetail, arguments: {
@@ -177,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: bgColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)],
         ),
@@ -199,9 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(product.name,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                   const SizedBox(height: 4),
-                  Text('\$${product.price}', style: const TextStyle(fontSize: 16, color: Colors.pink)),
+                  Text('\$${product.price}',
+                      style: const TextStyle(fontSize: 16, color: Colors.pink)),
                 ],
               ),
             ),

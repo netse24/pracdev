@@ -3,31 +3,41 @@ import 'config/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'database/product_database.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'features/products/services/product_service.dart';
 import 'features/shopping_cart/services/cart_service.dart';
-// ====================================================================
-// File: lib/main.dart
-// Main entry point of the application.
-// ====================================================================
 
+// ================= Theme Service =================
+class ThemeService {
+  final _box = GetStorage();
+  final _key = 'isDarkMode';
+
+  ThemeMode get theme => _loadThemeFromBox() ? ThemeMode.dark : ThemeMode.light;
+
+  bool _loadThemeFromBox() => _box.read(_key) ?? false;
+
+  void _saveThemeToBox(bool isDarkMode) => _box.write(_key, isDarkMode);
+
+  void switchTheme() {
+    Get.changeThemeMode(_loadThemeFromBox() ? ThemeMode.light : ThemeMode.dark);
+    _saveThemeToBox(!_loadThemeFromBox());
+  }
+}
+
+// ================= Main =================
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize sqflite for Windows/Linux/macOS
+  // Initialize GetStorage for theme persistence
+  await GetStorage.init();
+
+  // Initialize sqflite for Windows/Linux/macOS
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  // Initialize Firebase (uncomment when firebase_options.dart is available)
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-
   // Initialize SQLite database
   await ProductDatabase.instance.init();
-
-  // ✅ Insert demo products if table is empty
   await ProductDatabase.instance.insertDemoProductsIfEmpty();
 
   runApp(
@@ -63,6 +73,20 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.pink,
+        appBarTheme: const AppBarTheme(
+          color: Colors.black,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      themeMode: ThemeService().theme,
       initialRoute: AppRoute.splash,
       getPages: AppRoute.routes,
     );
