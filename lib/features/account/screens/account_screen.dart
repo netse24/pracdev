@@ -42,7 +42,7 @@ class AccountScreen extends StatelessWidget {
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               ),
-              child: const Text('Logout'),
+              child: const Text('Login'),
             ),
           ],
         ),

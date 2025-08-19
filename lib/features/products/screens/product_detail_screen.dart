@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../shopping_cart/services/cart_service.dart';
+import '../../../models/product.dart'; // ✅ Import your Product model
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
@@ -11,21 +12,21 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  late Map<String, dynamic> product;
-  late List<Map<String, dynamic>> allProducts;
+  late Product product; // ✅ Use Product instead of Map
+  late List<Product> allProducts; // ✅ List of Product
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = Get.arguments as Map<String, dynamic>;
-    product = args['product'] as Map<String, dynamic>;
-    allProducts = args['allProducts'] as List<Map<String, dynamic>>;
+    product = args['product'] as Product; // ✅ Cast to Product
+    allProducts = args['allProducts'] as List<Product>; // ✅ Cast to List<Product>
   }
 
   @override
   Widget build(BuildContext context) {
     final relatedProducts =
-        allProducts.where((p) => p["id"] != product["id"]).toList();
+        allProducts.where((p) => p.id != product.id).toList(); // ✅ Use Product.id
     final cartService = Provider.of<CartService>(context, listen: false);
 
     return Scaffold(
@@ -33,7 +34,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: Text(product["category"] ?? "",
+        title: Text(product.category ?? "",
             style: const TextStyle(color: Colors.pink)),
       ),
       body: Column(
@@ -56,7 +57,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(12)),
                             child: Image.asset(
-                              product["image"] ?? 'assets/images/default.png',
+                              product.imageUrl ?? 'assets/images/default.png',
                               width: double.infinity,
                               height: 250,
                               fit: BoxFit.cover,
@@ -68,14 +69,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  product["name"] ?? "Unknown",
+                                  product.name,
                                   style: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "\$${product["price"] ?? 0}",
+                                  "\$${product.price}", // ✅ price is double
                                   style: const TextStyle(
                                       fontSize: 18,
                                       color: Colors.pink,
@@ -83,7 +84,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  product["description"] ?? "No description",
+                                  product.description ?? "No description",
                                   style: const TextStyle(
                                       fontSize: 16, color: Colors.black54),
                                 ),
@@ -122,7 +123,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     borderRadius: BorderRadius.circular(12),
                                     onTap: () {
                                       setState(() {
-                                        product = item;
+                                        product = item; // ✅ Now item is Product
                                       });
                                     },
                                     child: Column(
@@ -147,7 +148,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                             child: Image.asset(
-                                              item["image"] ??
+                                              item.imageUrl ??
                                                   'assets/images/default.png',
                                               width: double.infinity,
                                               height: double.infinity,
@@ -159,7 +160,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         SizedBox(
                                           width: 100,
                                           child: Text(
-                                            item["name"] ?? "",
+                                            item.name,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
@@ -168,7 +169,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           ),
                                         ),
                                         Text(
-                                          "\$${item["price"] ?? 0}",
+                                          "\$${item.price}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.pink),
@@ -197,19 +198,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             color: Colors.white,
             child: ElevatedButton(
               onPressed: () {
-                cartService.addItem(product);
-                Get.toNamed('/cart');
+                cartService.addItem({
+                  "id": product.id,
+                  "name": product.name,
+                  "price": product.price,
+                  "image": product.imageUrl,
+                  "description": product.description,
+                  "category": product.category,
+                  "quantity": 1,
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Added to cart!")),
+                );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text(
-                "Add to Cart",
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
+              child: const Text("Add to Cart"),
             ),
           ),
         ],
