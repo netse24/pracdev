@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
 import 'config/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize sqflite for Windows/Linux/macOS
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
 
   // Initialize Firebase (uncomment when firebase_options.dart is available)
   // await Firebase.initializeApp(
