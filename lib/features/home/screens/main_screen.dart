@@ -5,6 +5,9 @@ import 'notification_screen.dart';
 import 'package:flutter/material.dart';
 import '../../account/screens/account_screen.dart';
 import '../../shopping_cart/screens/cart_screen.dart';
+import 'package:procdev/features/categories/screens/category_screen.dart';
+
+
 // ====================================================================
 // File: lib/features/home/screens/main_screen.dart
 // The main navigation screen with the bottom bar.
@@ -20,12 +23,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const Center(child: Text('Category Screen Placeholder')),
-    const NewsScreen(),
-    const CartScreen(),
-    const AccountScreen(),
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    CategoryScreen(),
+    NewsScreen(),
+    CartScreen(),
+    AccountScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -39,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Category'),
           BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: 'News'),
@@ -50,6 +53,7 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: Colors.pink,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 class ProductDatabase {
   static const _databaseName = "ProductDatabase.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2; // incremented
 
   static const productTable = 'products';
   static const columnId = 'id';
@@ -40,14 +40,12 @@ class ProductDatabase {
       CREATE TABLE $productTable (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
         $columnName TEXT NOT NULL,
-        $columnPrice TEXT NOT NULL,
+        $columnPrice REAL NOT NULL,
         $columnDescription TEXT,
         $columnImageUrl TEXT,
         $columnCategory TEXT
       )
     ''');
-
-    // Insert initial demo products
     await insertInitialProducts(db);
   }
 
@@ -55,64 +53,63 @@ class ProductDatabase {
     final initialProducts = [
       {
         columnName: "Night Cream",
-        columnPrice: "\$20",
+        columnPrice: 20.0,
         columnImageUrl: "assets/images/night_cream_1.jpg",
         columnCategory: "Night cream",
         columnDescription: "Use during the night",
       },
       {
         columnName: "Night Cream",
-        columnPrice: "\$15",
+        columnPrice: 15.0,
         columnImageUrl: "assets/images/night_cream_2.jpg",
         columnCategory: "Night cream",
         columnDescription: "Use during the night",
       },
       {
         columnName: "Night Cream",
-        columnPrice: "\$10",
+        columnPrice: 10.0,
         columnImageUrl: "assets/images/night_cream_3.jpg",
         columnCategory: "Night cream",
         columnDescription: "Use during the night",
       },
       {
         columnName: "Lip Stain",
-        columnPrice: "\$15",
+        columnPrice: 15.0,
         columnImageUrl: "assets/images/lip_stain_1.jpg",
         columnCategory: "Lip Stain",
         columnDescription: "Use on your lip",
       },
-
       {
         columnName: "Lip Stain",
-        columnPrice: "\$10",
+        columnPrice: 10.0,
         columnImageUrl: "assets/images/lip_stain_2.jpg",
         columnCategory: "Lip Stain",
         columnDescription: "Use on your lip",
       },
       {
         columnName: "Lip Stain",
-        columnPrice: "\$5",
+        columnPrice: 5.0,
         columnImageUrl: "assets/images/lip_stain_3.jpg",
         columnCategory: "Lip Stain",
         columnDescription: "Use on your lip",
       },
       {
         columnName: "Day Cream",
-        columnPrice: "\$15",
+        columnPrice: 15.0,
         columnImageUrl: "assets/images/day_cream_1.jpg",
         columnCategory: "Day Cream",
         columnDescription: "Use during the day",
       },
       {
         columnName: "Day Cream",
-        columnPrice: "\$5",
+        columnPrice: 5.0,
         columnImageUrl: "assets/images/day_cream_2.jpg",
         columnCategory: "Day Cream",
         columnDescription: "Use during the day",
       },
       {
         columnName: "Day Cream",
-        columnPrice: "\$10",
+        columnPrice: 10.0,
         columnImageUrl: "assets/images/day_cream_3.jpg",
         columnCategory: "Day Cream",
         columnDescription: "Use during the day",
@@ -124,30 +121,73 @@ class ProductDatabase {
     }
   }
 
-  Future<int> insertProduct(Map<String, dynamic> row) async {
-    final db = await database;
-    return await db.insert(productTable, row);
-  }
   Future<void> insertDemoProductsIfEmpty() async {
     final db = await database;
-    final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $productTable'));
+    final count = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $productTable'),
+    );
     if (count == 0) {
       await insertInitialProducts(db);
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllProducts() async {
+  // ===================== CRUD OPERATIONS =====================
+
+  Future<int> insertProduct(Product product) async {
     final db = await database;
-    return await db.query(productTable);
+    return await db.insert(productTable, product.toMap());
+  }
+
+  Future<List<Product>> getAllProducts() async {
+    final db = await database;
+    final result = await db.query(productTable);
+    return result.map((map) => Product.fromMap(map)).toList();
+  }
+
+  Future<Product?> getProductById(int id) async {
+    final db = await database;
+    final result = await db.query(
+      productTable,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+    if (result.isNotEmpty) {
+      return Product.fromMap(result.first);
+    }
+    return null;
+  }
+
+  Future<int> updateProduct(Product product) async {
+    final db = await database;
+    return await db.update(
+      productTable,
+      product.toMap(),
+      where: '$columnId = ?',
+      whereArgs: [product.id],
+    );
   }
 
   Future<int> deleteProduct(int id) async {
     final db = await database;
-    return await db.delete(productTable, where: '$columnId = ?', whereArgs: [id]);
+    return await db.delete(
+      productTable,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<int> deleteAllProducts() async {
     final db = await database;
     return await db.delete(productTable);
+  }
+
+  Future<List<Product>> searchProducts(String keyword) async {
+    final db = await database;
+    final result = await db.query(
+      productTable,
+      where: '$columnName LIKE ? OR $columnCategory LIKE ?',
+      whereArgs: ['%$keyword%', '%$keyword%'],
+    );
+    return result.map((map) => Product.fromMap(map)).toList();
   }
 }
