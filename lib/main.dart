@@ -1,4 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:procdev/config/firebase_options.dart';
+import 'package:procdev/features/authentication/services/auth_service.dart';
 import 'dart:io' show Platform;
 import 'config/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -31,14 +34,21 @@ class ThemeService {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    if (Firebase.apps.isEmpty) {
+      print("Initializing Firebase...");
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      print("Firebase already initialized: ${Firebase.apps.first.name}");
+    }
+  } catch (e) {
+    print("Firebase init error: $e");
+  }
   // ✅ Initialize sqflite for Windows/Linux/macOS
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
-
-  // Initialize Firebase (uncomment when firebase_options.dart is available)
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
 
   // Initialize SQLite database
   await ProductDatabase.instance.init();
@@ -47,6 +57,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => ProductService()),
         ChangeNotifierProvider(create: (_) => CartService()),
       ],

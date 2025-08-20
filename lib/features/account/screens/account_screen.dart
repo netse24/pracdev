@@ -1,52 +1,138 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../../../config/app_routes.dart';
-import '../../authentication/services/auth_service.dart';
+import 'package:procdev/features/account/screens/account_screen_detail.dart';
+import 'package:procdev/features/authentication/screens/login_screen.dart';
+import 'package:procdev/features/home/language/language_screen.dart';
+import 'package:procdev/features/home/theme/theme_screen.dart';
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/features/authentication/services/auth_service.dart';
 
 // ====================================================================
 // File: lib/features/account/screens/account_screen.dart
 // The user's account page.
 // ====================================================================
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final authService = AuthService();
+  State<AccountScreen> createState() => _AccountScreenState();
+}
 
+class _AccountScreenState extends State<AccountScreen> {
+  String? _fullName = "Guest";
+  bool _isLogin = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final User? user = await _auth.currentUser;
+    String username = user!.email!.split("@")[0];
+    setState(() {
+      _fullName = username;
+      _isLogin = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account'),
+        title: Text("more".tr, style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        elevation: 0.5,
+        backgroundColor: Colors.pink,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.person, size: 100, color: Colors.pink),
-            const SizedBox(height: 20),
-            const Text(
-              'User Profile',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Column(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.language),
+                  title: Text('language'.tr),
+                  subtitle: Text(
+                    Get.deviceLocale?.languageCode == "en_US"
+                        ? "englishLanguage".tr
+                        : "khmerLanguage".tr,
+                  ),
+                  trailing: Icon(Icons.navigate_next),
+                  onTap: () {
+                    Get.to(LanguageScreen());
+                  },
+                ),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.dark_mode),
+                  title: Text("Theme"),
+                  subtitle: Text(Get.isDarkMode ? "Dark" : "Light"),
+                  trailing: Icon(Icons.navigate_next),
+                  onTap: () {
+                    Get.to(ThemeScreen());
+                  },
+                ),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text("Profile"),
+                  subtitle: Text("$_fullName"),
+                  trailing: Icon(Icons.navigate_next),
+                  onTap: () {
+                    _validateLogin();
+                  },
+                ),
+                Divider(),
+              ],
             ),
-            const SizedBox(height: 10),
-            const Text('Welcome, User!'),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                authService.signOut();
-                Get.offAllNamed(AppRoute.login);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              child: const Text('Login'),
-            ),
-          ],
+          ),
+          _isLogin ? _logoutButton : Container(),
+        ],
+      ),
+    );
+  }
+
+  Widget get _logoutButton {
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      child: SizedBox(
+        height: 40,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+          onPressed: () {
+            _logout();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Logout", style: TextStyle(color: Colors.white)),
+              SizedBox(width: 4),
+              Icon(Icons.logout, color: Colors.white),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _logout() async {
+    await _auth.signOut();
+    Get.off(LoginScreen());
+  }
+
+  Future<void> _validateLogin() async {
+    if (!_isLogin) {
+      Get.off(LoginScreen());
+    } else {
+      // To Account Screen
+      print("Navigating to Account Detail Screen");
+      // Get.to(() => AccountScreenDetail());
+      Get.to(AccountScreenDetail());
+    }
   }
 }
