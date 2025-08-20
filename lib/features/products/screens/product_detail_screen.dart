@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../models/product.dart'; 
 import 'package:provider/provider.dart';
+import '../../../widgets/custom_appbar.dart';
 import '../../shopping_cart/services/cart_service.dart';
-import '../../../models/product.dart'; // ✅ Import your Product model
-
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
 
