@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:procdev/features/account/screens/account_screen_detail.dart';
 import 'package:procdev/features/authentication/screens/login_screen.dart';
 import 'package:procdev/features/home/language/language_screen.dart';
-import 'package:procdev/features/home/theme/theme_screen.dart';
 import 'package:procdev/config/app_routes.dart';
 import 'package:procdev/features/authentication/services/auth_service.dart';
 
@@ -65,16 +64,6 @@ class _AccountScreenState extends State<AccountScreen> {
                   trailing: Icon(Icons.navigate_next),
                   onTap: () {
                     Get.to(LanguageScreen());
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.dark_mode),
-                  title: Text("Theme"),
-                  subtitle: Text(Get.isDarkMode ? "Dark" : "Light"),
-                  trailing: Icon(Icons.navigate_next),
-                  onTap: () {
-                    Get.to(ThemeScreen());
                   },
                 ),
                 Divider(),
