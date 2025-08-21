@@ -214,7 +214,7 @@ class CartScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text("Proceed to Payment",
+                          child: Text("proceedToCheckout".tr,
                               style:
                                   TextStyle(fontSize: 18, color: Colors.white)),
                         ),
