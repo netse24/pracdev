@@ -12,7 +12,20 @@
           "package_name": "com.example.procdev"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "735998111425-r8976h0jjh3q8f7et5sijetldhq2fqqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.procdev",
+            "certificate_hash": "f129fdb3326c70aed0b6fdd0fdf6e1332b20c7f4"
+          }
+        },
+        {
+          "client_id": "735998111425-jbp380m7q82hj7shdnfbqv1g6fuqd2c7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBCNtfxFMfKWvWNoTfmC80KmMfyeHmij_A"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735998111425-jbp380m7q82hj7shdnfbqv1g6fuqd2c7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

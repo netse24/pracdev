@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,6 +19,7 @@ import 'package:procdev/features/shopping_cart/services/cart_service.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:crypto/crypto.dart';
 
 // ================= Main =================
 void main() async {
@@ -25,7 +28,7 @@ void main() async {
   if (kIsWeb) {
     // Initialize the Facebook SDK for web
     await FacebookAuth.i.webAndDesktopInitialize(
-      appId: "YOUR_FACEBOOK_APP_ID", // <-- Replace with your App ID
+      appId: "919075587089007", // <-- Replace with your App ID
       cookie: true,
       xfbml: true,
       version: "v15.0",
@@ -53,7 +56,7 @@ void main() async {
   // Initialize SQLite database
   await ProductDatabase.instance.init();
   await ProductDatabase.instance.insertDemoProductsIfEmpty();
-
+  await printKeyHash();
   runApp(
     MultiProvider(
       providers: [
@@ -68,7 +71,6 @@ void main() async {
 
 class RootApp extends StatelessWidget {
   const RootApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -113,5 +115,42 @@ class RootApp extends StatelessWidget {
       themeMode: ThemeService().theme,
       initialRoute: AppRoute.splash,
     );
+  }
+}
+
+Future<void> printKeyHash() async {
+  print(
+      "--- Attempting to get Key Hash ---"); // 1. Check if the function is even being called.
+  try {
+    final signature = await const MethodChannel('flutter_facebook_auth')
+        .invokeMethod('getSignature');
+
+    // 2. Print what we get back from the native code. It's probably null.
+    print("Signature returned from native code: $signature");
+
+    if (signature != null) {
+      final decodedSignature = base64Decode(signature);
+      final sha1Bytes = sha1.convert(decodedSignature);
+      final keyHash = base64.encode(sha1Bytes.bytes);
+
+      print('=====================================================');
+      print('          Your Android Debug Key Hash is:');
+      print(keyHash);
+      print('=====================================================');
+    } else {
+      print("--- FAILED: The signature was null. ---");
+      print(
+          "--- This almost always means the Facebook SDK is not correctly set up in your Android files. Please check Step 2 below. ---");
+    }
+  } on PlatformException catch (e) {
+    // 3. Catch a more specific error if the method doesn't exist.
+    print("--- FAILED WITH A PLATFORM EXCEPTION ---");
+    print("Error Message: ${e.message}");
+    print(
+        "This means the native method 'getSignature' could not be found. Please check your Android setup.");
+  } catch (e) {
+    // 4. Catch any other unexpected errors.
+    print('--- FAILED WITH A GENERAL EXCEPTION ---');
+    print('Error: $e');
   }
 }

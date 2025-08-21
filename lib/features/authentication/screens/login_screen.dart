@@ -86,7 +86,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          print("Google login button pressed");
+
+                          // 1. Get the AuthService from Provider
+                          final authService =
+                              Provider.of<AuthService>(context, listen: false);
+
+                          try {
+                            // 2. Await the result of the sign-in attempt
+                            final bool success =
+                                await authService.signInWithGoogle();
+
+                            // 3. Check the boolean result directly
+                            if (success) {
+                              // If true, the login was successful. Navigate to the main screen.
+                              print(
+                                  "Google sign-in successful, navigating to MainScreen.");
+                              Get.offAll(() =>
+                                  MainScreen()); // Use a callback for better performance
+                            } else {
+                              // If false, the AuthService already handled showing a specific
+                              // error snackbar. You could log it here if you want.
+                              print(
+                                  "Google sign-in failed (handled by AuthService).");
+                            }
+                          } catch (e) {
+                            // 4. Add a final catch block for any unexpected errors
+                            // that the service might not have handled.
+                            print("An unexpected error occurred in the UI: $e");
+                            Get.snackbar('Login Error',
+                                'An unexpected error occurred. Please try again.');
+                          }
+                        },
                         icon: Image.asset(
                           'assets/images/gg.png',
                           width: 30,

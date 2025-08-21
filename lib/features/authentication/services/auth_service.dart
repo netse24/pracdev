@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:procdev/features/home/screens/main_screen.dart'; // Using Get for snackbars is a good practice
+import 'package:google_sign_in/google_sign_in.dart';
 
 // ====================================================================
 // File: lib/features/authentication/services/auth_service.dart
@@ -148,6 +149,65 @@ class AuthService extends ChangeNotifier {
       return false;
     } catch (e) {
       Get.snackbar('Error', 'An unexpected error occurred: $e');
+      return false;
+    }
+  }
+
+  Future<bool> signInWithGoogle() async {
+    try {
+      // 1. Begin the interactive sign-in process with Google
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // 2. If the user cancelled the process, return false
+      if (googleUser == null) {
+        print("Google sign-in was cancelled by the user.");
+        return false;
+      }
+
+      // 3. Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // 4. Create a new credential for Firebase using the tokens from Google
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 5. Sign in to Firebase with the credential
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      // Get the user from the credential
+      Get.snackbar('Google Sign-In', 'Successfully signed in with Google!');
+      print("Google sign-in successful. User: ${userCredential.user?.email}");
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // 6. Check if this is a new user
+        final docRef = _firestore.collection('users').doc(user.uid);
+        final docSnapshot = await docRef.get();
+
+        if (!docSnapshot.exists) {
+          // If the user document doesn't exist, this is their first login.
+          // Create their profile in Firestore.
+          print("New Google user. Creating profile in Firestore...");
+          await docRef.set({
+            'fullName': user.displayName ?? '',
+            'email': user.email ?? '',
+            'photoUrl': user.photoURL ?? '',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+        return true; // Success!
+      }
+      return false;
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+          'Google Sign-In Error', e.message ?? 'An unknown error occurred.');
+      return false;
+    } catch (e) {
+      print("Unexpected Google sign-in error: $e");
+      Get.snackbar('Error', 'An unexpected error occurred.');
       return false;
     }
   }
