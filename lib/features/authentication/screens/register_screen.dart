@@ -196,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         },
         child: Text(
-          "Register",
+          "register".tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
