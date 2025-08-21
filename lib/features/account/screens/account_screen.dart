@@ -1,16 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:procdev/config/app_routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:procdev/features/account/screens/account_screen_detail.dart';
 import 'package:procdev/features/authentication/screens/login_screen.dart';
 import 'package:procdev/features/home/language/language_screen.dart';
-import 'package:procdev/config/app_routes.dart';
 import 'package:procdev/features/authentication/services/auth_service.dart';
-
-// ====================================================================
-// File: lib/features/account/screens/account_screen.dart
-// The user's account page.
-// ====================================================================
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -32,7 +28,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Future<void> _loadUser() async {
     final User? user = await _auth.currentUser;
-    String username = user!.email!.split("@")[0];
+    String username = user?.displayName ?? user!.email!.split("@")[0];
     setState(() {
       _fullName = username;
       _isLogin = true;
@@ -57,7 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   leading: Icon(Icons.language),
                   title: Text('language'.tr),
                   subtitle: Text(
-                    Get.deviceLocale?.languageCode == "en_US"
+                    Get.deviceLocale?.languageCode == "en"
                         ? "englishLanguage".tr
                         : "khmerLanguage".tr,
                   ),
@@ -69,7 +65,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Divider(),
                 ListTile(
                   leading: Icon(Icons.account_circle),
-                  title: Text("Profile"),
+                  title: Text("profile".tr),
                   subtitle: Text("$_fullName"),
                   trailing: Icon(Icons.navigate_next),
                   onTap: () {
@@ -99,7 +95,7 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Logout", style: TextStyle(color: Colors.white)),
+              Text("logout".tr, style: TextStyle(color: Colors.white)),
               SizedBox(width: 4),
               Icon(Icons.logout, color: Colors.white),
             ],
@@ -111,6 +107,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Future<void> _logout() async {
     await _auth.signOut();
+    await FacebookAuth.instance.logOut();
     Get.off(LoginScreen());
   }
 

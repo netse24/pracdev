@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
+import 'package:procdev/models/db_constant.dart';
+import 'package:procdev/models/product.dart';
 import 'package:sqflite/sqflite.dart';
-import '../models/product.dart'; // Import your new model
-import '../models/db_constant.dart'; // Import your constants
 
 class SqfliteDbData {
   // String dbName = 'book.db';

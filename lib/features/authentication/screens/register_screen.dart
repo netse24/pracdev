@@ -2,11 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:procdev/features/authentication/screens/login_screen.dart';
-import 'package:procdev/widgets/social_widget.dart';
-import '../services/auth_service.dart';
+import 'package:procdev/features/authentication/services/auth_service.dart';
 import 'package:provider/provider.dart';
-import '../../../config/app_routes.dart';
-import '../../../widgets/logo_widget.dart';
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/widgets/logo_widget.dart';
 
 // ====================================================================
 // File: lib/features/authentication/screens/register_screen.dart
@@ -47,9 +46,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            LogoWidget(),
-            const Text(
-              'Create Account',
+            CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.pink,
+                child: const Icon(Icons.person, size: 50, color: Colors.white)),
+            Text(
+              'register'.tr + ' ' + 'account'.tr,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
@@ -61,7 +63,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 20),
             _registerButton,
             const SizedBox(height: 20),
-            SocialWidget(),
             _navigateToLoginButton,
           ],
         ),
@@ -76,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           value == null || value.isEmpty ? 'Please enter your full name' : null,
       decoration: InputDecoration(
         prefix: Icon(Icons.account_circle, color: Colors.grey),
-        labelText: 'Full Name',
+        labelText: 'fullName'.tr,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
@@ -106,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         suffixIcon: _isEmailValid
             ? Icon(Icons.check_circle, color: Colors.green)
             : Icon(Icons.check_circle, color: Colors.grey),
-        labelText: 'Email',
+        labelText: 'email'.tr,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
@@ -126,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return null;
       },
       decoration: InputDecoration(
-        labelText: 'Password',
+        labelText: 'pwd'.tr,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
         prefixIcon: const Icon(Icons.lock, color: Colors.grey),
         suffixIcon: _isObscureText
@@ -174,10 +175,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _passwordController.text,
             );
 
-            print("Full Name : $fullName");
-            print("Email : $email");
-            print("Password : $password");
-            print("Sucess: $success");
+            // print("Full Name : $fullName");
+            // print("Email : $email");
+            // print("Password : $password");
+            // print("Sucess: $success");
             // Firebase Auth
             if (success) {
               Get.offAllNamed(AppRoute.main);
@@ -194,7 +195,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _passwordController.text = "";
           }
         },
-        child: Text("Register"),
+        child: Text(
+          "Register",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // Pink color
+            letterSpacing: 1.2,
+          ),
+        ),
       ),
     );
   }
@@ -206,8 +215,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Navigator.of(context).pushNamed(AppRoute.login);
         Get.to(LoginScreen());
       },
-      child: const Text(
-        "Already an exist Login",
+      child: Text(
+        "alreadyHaveAccount".tr,
         style: TextStyle(color: Colors.blue),
       ),
     );

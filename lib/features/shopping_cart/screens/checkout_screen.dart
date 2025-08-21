@@ -1,7 +1,8 @@
-import 'payment_screen.dart';
 import 'package:flutter/material.dart';
-import '../services/cart_service.dart';
+import 'package:get/get.dart';
+import 'package:procdev/features/shopping_cart/screens/payment_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:procdev/features/shopping_cart/services/cart_service.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -123,10 +124,9 @@ class CheckoutScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text(
-                            "Proceed to Payment",
-                            style: TextStyle(
-                                fontSize: 18, color: Colors.white),
+                          child: Text(
+                            "proceedToCheckout".tr,
+                            style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
                       ),

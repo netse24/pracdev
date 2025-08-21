@@ -1,8 +1,8 @@
-import 'payment_screen.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../services/cart_service.dart';
 import 'package:provider/provider.dart';
+import 'package:procdev/features/shopping_cart/services/cart_service.dart';
+import 'package:procdev/features/shopping_cart/screens/payment_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -12,7 +12,8 @@ class CartScreen extends StatelessWidget {
     final cartService = Provider.of<CartService>(context);
     final theme = Theme.of(context);
 
-    void _confirmDelete(BuildContext context, CartService cartService, Map<String, dynamic> item) {
+    void _confirmDelete(BuildContext context, CartService cartService,
+        Map<String, dynamic> item) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -25,21 +26,22 @@ class CartScreen extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
               const SizedBox(width: 8),
-              const Text("Remove Item"),
+              Text("removeItem".tr),
             ],
           ),
-          content: Text("Are you sure you want to remove '${item['name']}' from your cart?"),
+          content: Text(
+              "Are you sure you want to remove '${item['name']}' from your cart?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text("cancel".tr),
             ),
             TextButton(
               onPressed: () {
                 cartService.removeItem(item['id']);
                 Navigator.pop(context);
               },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+              child: Text("delete".tr, style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
@@ -63,7 +65,8 @@ class CartScreen extends StatelessWidget {
               children: const [
                 Text(
                   "Online B.U.T Store",
-                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.pink, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "Beauty with Us",
@@ -78,7 +81,8 @@ class CartScreen extends StatelessWidget {
           ? Center(
               child: Text(
                 "Your cart is empty",
-                style: TextStyle(fontSize: 18, color: theme.textTheme.bodyMedium?.color),
+                style: TextStyle(
+                    fontSize: 18, color: theme.textTheme.bodyMedium?.color),
               ),
             )
           : Column(
@@ -127,28 +131,34 @@ class CartScreen extends StatelessWidget {
                                   Text(item['name'],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: theme.textTheme.bodyLarge?.color)),
+                                          color: theme
+                                              .textTheme.bodyLarge?.color)),
                                   const SizedBox(height: 4),
                                   Text('\$${price.toStringAsFixed(2)}',
                                       style: const TextStyle(
-                                          color: Colors.pink, fontWeight: FontWeight.w600)),
+                                          color: Colors.pink,
+                                          fontWeight: FontWeight.w600)),
                                   const SizedBox(height: 8),
                                   Row(
                                     children: [
                                       IconButton(
                                           icon: const Icon(Icons.remove),
-                                          onPressed: () =>
-                                              cartService.decreaseQuantity(item['id'])),
-                                      Text('$quantity', style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                                          onPressed: () => cartService
+                                              .decreaseQuantity(item['id'])),
+                                      Text('$quantity',
+                                          style: TextStyle(
+                                              color: theme.textTheme.bodyMedium
+                                                  ?.color)),
                                       IconButton(
                                           icon: const Icon(Icons.add),
-                                          onPressed: () =>
-                                              cartService.increaseQuantity(item['id'])),
+                                          onPressed: () => cartService
+                                              .increaseQuantity(item['id'])),
                                       const Spacer(),
                                       IconButton(
-                                          icon: const Icon(Icons.delete, color: Colors.red),
-                                          onPressed: () =>
-                                              _confirmDelete(context, cartService, item)),
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () => _confirmDelete(
+                                              context, cartService, item)),
                                     ],
                                   ),
                                 ],
@@ -179,9 +189,12 @@ class CartScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text("Total:",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          Text("\$${cartService.totalPrice().toStringAsFixed(2)}",
-                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text(
+                              "\$${cartService.totalPrice().toStringAsFixed(2)}",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -191,7 +204,8 @@ class CartScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const PaymentScreen()),
+                              MaterialPageRoute(
+                                  builder: (_) => const PaymentScreen()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -201,7 +215,8 @@ class CartScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12)),
                           ),
                           child: const Text("Proceed to Payment",
-                              style: TextStyle(fontSize: 18, color: Colors.white)),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
                         ),
                       ),
                     ],

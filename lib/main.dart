@@ -1,35 +1,22 @@
 import 'dart:io' show Platform;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:procdev/services/theme_service.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:procdev/config/firebase_options.dart';
 import 'package:procdev/features/authentication/services/auth_service.dart';
-import 'config/app_routes.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'database/product_database.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'features/products/services/product_service.dart';
-import 'features/shopping_cart/services/cart_service.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart'; // <-- Keep this import
-
-// ================= Theme Service =================
-class ThemeService {
-  final _box = GetStorage();
-  final _key = 'isDarkMode';
-
-  ThemeMode get theme => _loadThemeFromBox() ? ThemeMode.dark : ThemeMode.light;
-
-  bool _loadThemeFromBox() => _box.read(_key) ?? false;
-
-  void _saveThemeToBox(bool isDarkMode) => _box.write(_key, isDarkMode);
-
-  void switchTheme() {
-    Get.changeThemeMode(_loadThemeFromBox() ? ThemeMode.light : ThemeMode.dark);
-    _saveThemeToBox(!_loadThemeFromBox());
-  }
-}
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/translate/messages.dart';
+import 'package:procdev/database/product_database.dart';
+import 'package:procdev/features/products/services/product_service.dart';
+import 'package:procdev/features/shopping_cart/services/cart_service.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 // ================= Main =================
 void main() async {
@@ -74,13 +61,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ProductService()),
         ChangeNotifierProvider(create: (_) => CartService()),
       ],
-      child: const MyApp(),
+      child: const RootApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RootApp extends StatelessWidget {
+  const RootApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +101,17 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale("en", "US"), Locale("km", "KH")],
+      locale: Get.deviceLocale,
+      translations: Messages(),
+      getPages: AppRoute.routes,
       themeMode: ThemeService().theme,
       initialRoute: AppRoute.splash,
-      getPages: AppRoute.routes,
     );
   }
 }

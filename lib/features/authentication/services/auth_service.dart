@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart'; // Using Get for snackbars is a good practice
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:get/get.dart';
+import 'package:procdev/features/home/screens/main_screen.dart'; // Using Get for snackbars is a good practice
 
 // ====================================================================
 // File: lib/features/authentication/services/auth_service.dart
@@ -15,7 +17,7 @@ class AuthService extends ChangeNotifier {
 
   User? _user;
   bool get isAuthenticated => _user != null;
-
+  User? get currentUser => _user;
   AuthService() {
     // This is the real-time listener for auth state.
     // It will automatically update the app when a user logs in or out.
@@ -91,6 +93,61 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       print("Unexpected registration error: $e");
       Get.snackbar('Error', 'An unexpected error occurred.');
+      return false;
+    }
+  }
+
+  Future<bool> signInWithFacebook() async {
+    try {
+      // 1. Trigger the Facebook login popup and ask for permissions
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['public_profile', 'email'],
+      );
+
+      // 2. Check if the login was successful
+      if (result.status == LoginStatus.success) {
+        final AccessToken accessToken = result.accessToken!;
+
+        // 3. Get the OAuth credential for Firebase
+        final OAuthCredential credential =
+            FacebookAuthProvider.credential(accessToken.tokenString);
+
+        // 4. Sign in to Firebase Authentication with the Facebook credential
+        final UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          // 5. Fetch the user's profile data from Facebook
+          final userData = await FacebookAuth.instance.getUserData();
+          final String name = userData['name'] ?? '';
+          final String email = userData['email'] ?? '';
+          // Safely get the profile picture URL
+          final String? photoUrl = userData['picture']?['data']?['url'];
+
+          // 6. Save/Update the user's data in Firestore
+          // We use .set with merge:true. This will create the user document if it's their
+          // first time logging in, or update their details if they've logged in before.
+          await _firestore.collection('users').doc(user.uid).set({
+            'fullName': name,
+            'email': email,
+            'photoUrl': photoUrl, // <-- SAVE THE PROFILE PICTURE URL HERE
+            'lastLogin': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+          return true; // Indicate success
+        }
+      } else {
+        // Handle login cancellation or failure
+        Get.snackbar('Facebook Login Failed',
+            result.message ?? 'The login was cancelled.');
+        return false;
+      }
+      return false;
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Firebase Error', e.message ?? 'An error occurred.');
+      return false;
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred: $e');
       return false;
     }
   }

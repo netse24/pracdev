@@ -48,6 +48,9 @@ dependencies:
   flutter_facebook_auth: ^7.1.2
   cloud_firestore: ^5.6.12
   get_storage: ^2.1.1
+  shimmer: ^3.0.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

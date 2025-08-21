@@ -10,24 +10,35 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  bool _isEnglish = true;
+  Locale? _currentLocale;
 
   @override
   void initState() {
     super.initState();
-    var locale = Get.deviceLocale;
-    print(locale);
-    _isEnglish = locale?.languageCode == "en_US";
+    _currentLocale = Get.locale;
+    print("Current local code: ${_currentLocale?.languageCode}");
+  }
+
+  void _changeLocale(Locale newLocale) {
+    // Tell GetX to update the app's language
+    Get.updateLocale(newLocale);
+    // Update the state of this screen to change the checkboxes
+    setState(() {
+      _currentLocale = newLocale;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isEnglish =
+        _currentLocale?.languageCode.startsWith('en') ?? true;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("language".tr),
         centerTitle: true,
         elevation: 0.5,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.pink,
       ),
       body: ListView(
         children: [
@@ -35,30 +46,28 @@ class _LanguageScreenState extends State<LanguageScreen> {
             leading: Icon(Icons.language),
             title: Text("khmerLanguage".tr),
             trailing: Checkbox(
-              value: !_isEnglish,
-              onChanged: (v) {
-                Get.updateLocale(Locale('km', 'KH'));
-                setState(() {
-                  _isEnglish = false;
-                });
+              value: !isEnglish,
+              onChanged: (value) {
+                if (value == true) {
+                  _changeLocale(const Locale('km', 'KH'));
+                }
               },
             ),
           ),
-          Divider(),
+          const Divider(),
           ListTile(
             leading: Icon(Icons.language),
             title: Text("englishLanguage".tr),
             trailing: Checkbox(
-              value: _isEnglish,
-              onChanged: (v) {
-                Get.updateLocale(Locale('en', 'US'));
-                setState(() {
-                  _isEnglish = true;
-                });
+              value: isEnglish,
+              onChanged: (value) {
+                if (value == true) {
+                  _changeLocale(const Locale('en', 'US'));
+                }
               },
             ),
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );

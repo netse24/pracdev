@@ -1,4 +1,4 @@
-import '../../../models/category.dart';
+import 'package:procdev/models/category.dart';
 
 class CategoryService {
   static List<Category> getDemoCategories() {

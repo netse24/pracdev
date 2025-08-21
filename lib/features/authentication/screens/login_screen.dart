@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:procdev/data/shared_pref_data.dart';
 import 'package:procdev/features/authentication/screens/register_screen.dart';
+import 'package:procdev/features/authentication/services/auth_service.dart';
 import 'package:procdev/features/home/screens/main_screen.dart';
-import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
-import '../../../config/app_routes.dart';
-import '../../../widgets/logo_widget.dart';
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/widgets/logo_widget.dart';
 
 // ====================================================================
 // File: lib/features/authentication/screens/login_screen.dart
@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,15 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  LogoWidget(),
+                  CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.pink,
+                      child: const Icon(Icons.person,
+                          size: 50, color: Colors.white)),
+                  Text(
+                    'login'.tr + ' ' + 'account'.tr,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 20),
                   _emailTextFormField,
                   const SizedBox(height: 20),
@@ -61,9 +70,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {
-                          print("Facebook login button pressed");
-                          _signInWithFacebook();
+                        onPressed: () async {
+                          // print("Facebook login button pressed");
+                          if (await _authService.signInWithFacebook()) {
+                            Get.offAll(MainScreen());
+                          } else {
+                            Get.snackbar('Login Error',
+                                'Failed to login with Facebook.');
+                          }
                         },
                         icon: Image.asset(
                           'assets/images/fb.jpg',
@@ -116,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
         suffixIcon: _isEmailValid
             ? Icon(Icons.check_circle, color: Colors.green)
             : Icon(Icons.check_circle, color: Colors.grey),
-        labelText: 'Email',
+        labelText: 'email'.tr,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
@@ -136,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return null;
       },
       decoration: InputDecoration(
-        labelText: 'Password',
+        labelText: 'pwd'.tr,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
         prefixIcon: const Icon(Icons.lock, color: Colors.grey),
         suffixIcon: _isObscureText
@@ -176,12 +190,20 @@ class _LoginScreenState extends State<LoginScreen> {
             String email = _emailController.text;
             String password = _passwordController.text;
 
-            print("Email : $email");
-            print("Password : $password");
+            // print("Email : $email");
+            // print("Password : $password");
             onLogin(email, password);
           }
         },
-        child: Text("Login"),
+        child: Text(
+          "login".tr,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // Pink color
+            letterSpacing: 1.2,
+          ),
+        ),
       ),
     );
   }
@@ -189,9 +211,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget get _skip {
     return TextButton(
       onPressed: () {
-        Get.off(MainScreen());
+        Get.offAll(MainScreen());
       },
-      child: const Text("Skip", style: TextStyle(color: Colors.blue)),
+      child: Text("skip".tr, style: TextStyle(color: Colors.blue)),
     );
   }
 
@@ -202,8 +224,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navigator.of(context).pushNamed(AppRoute.register);
         Get.to(RegisterScreen());
       },
-      child: const Text(
-        "Don't have an account? Register",
+      child: Text(
+        "iDontHaveAccount".tr,
         style: TextStyle(color: Colors.blue),
       ),
     );
@@ -214,15 +236,11 @@ class _LoginScreenState extends State<LoginScreen> {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((UserCredential user) {
-        print("User :  $user");
+        // print("User :  $user");
         SharedPrefData.login(email, password);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Login successful.')));
-        // Navigation
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(builder: (context) => MainScreen()),
-        // );
 
         Get.offAllNamed(AppRoute.main);
       }).catchError((e) {
@@ -236,29 +254,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Login : $e")));
-    }
-  }
-
-  Future<void> _signInWithFacebook() async {
-    try {
-      LoginResult result = await FacebookAuth.instance.login();
-      if (result.status == LoginStatus.success) {
-        // OAuthCredential credential = FacebookAuthProvider.credential(
-        //   result.accessToken!.tokenString,
-        // );
-        // await FirebaseAuth.instance.signInWithCredential(credential);
-        Get.offAll(MainScreen());
-
-        print("Data : ${result.accessToken!.tokenString}");
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error ${result.message}")));
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("$error")));
     }
   }
 }

@@ -5,12 +5,14 @@ class UserProfile {
   String gender;
   DateTime dateOfBirth;
   String email;
+  String? photoUrl;
 
   UserProfile({
     required this.fullName,
     required this.gender,
     required this.dateOfBirth,
     required this.email,
+    this.photoUrl,
   });
 
   // Factory constructor to create a UserProfile from a Firestore document
@@ -24,6 +26,7 @@ class UserProfile {
       dateOfBirth:
           (data?['dateOfBirth'] as Timestamp?)?.toDate() ?? DateTime.now(),
       email: data?['email'] ?? '',
+      photoUrl: data?['photoUrl'],
     );
   }
 
@@ -34,6 +37,7 @@ class UserProfile {
       "gender": gender,
       "dateOfBirth": dateOfBirth,
       "email": email,
+      "photoUrl": photoUrl,
     };
   }
 }
