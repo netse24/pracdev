@@ -1,18 +1,18 @@
 import 'package:get/get.dart';
-import '../features/home/screens/home_screen.dart';
-import '../features/home/screens/news_screen.dart';
-import '../features/home/screens/main_screen.dart';
-import '../features/account/screens/account_screen.dart';
-import '../features/home/screens/notification_screen.dart';
-import '../features/shopping_cart/screens/cart_screen.dart';
-import '../features/categories/screens/category_screen.dart';
-import '../features/authentication/screens/login_screen.dart';
-import '../features/shopping_cart/screens/payment_screen.dart';
-import '../features/authentication/screens/splash_screen.dart';
-import '../features/authentication/screens/register_screen.dart';
-import '../features/products/screens/product_detail_screen.dart';
+import 'package:procdev/features/account/screens/account_screen_detail.dart';
+import 'package:procdev/features/home/screens/home_screen.dart';
+import 'package:procdev/features/home/screens/news_screen.dart';
+import 'package:procdev/features/home/screens/main_screen.dart';
+import 'package:procdev/features/account/screens/account_screen.dart';
+import 'package:procdev/features/home/screens/notification_screen.dart';
+import 'package:procdev/features/shopping_cart/screens/cart_screen.dart';
+import 'package:procdev/features/categories/screens/category_screen.dart';
+import 'package:procdev/features/authentication/screens/login_screen.dart';
+import 'package:procdev/features/shopping_cart/screens/payment_screen.dart';
+import 'package:procdev/features/authentication/screens/splash_screen.dart';
+import 'package:procdev/features/authentication/screens/register_screen.dart';
+import 'package:procdev/features/products/screens/product_detail_screen.dart';
 import 'package:procdev/features/shopping_cart/screens/checkout_screen.dart';
-
 
 // ====================================================================
 // File: lib/config/app_routes.dart
@@ -28,6 +28,7 @@ class AppRoute {
   static const productDetail = '/product_detail';
   static const cart = '/cart';
   static const account = '/account';
+  static const accountDetail = '/accountDetail';
   static const news = '/news';
   static const notification = '/notification';
   static const paymentScreen = '/checkout';
@@ -42,6 +43,7 @@ class AppRoute {
     GetPage(name: productDetail, page: () => const ProductDetailScreen()),
     GetPage(name: cart, page: () => const CartScreen()),
     GetPage(name: account, page: () => const AccountScreen()),
+    GetPage(name: accountDetail, page: () => const AccountScreenDetail()),
     GetPage(name: news, page: () => const NewsScreen()),
     GetPage(name: notification, page: () => const NotificationScreen()),
     GetPage(name: paymentScreen, page: () => const CheckoutScreen()),

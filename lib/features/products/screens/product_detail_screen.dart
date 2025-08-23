@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../../../models/product.dart'; 
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/features/authentication/services/auth_service.dart';
+import 'package:procdev/features/shopping_cart/services/cart_service.dart';
+import 'package:procdev/models/product.dart';
 import 'package:provider/provider.dart';
-import '../../../widgets/custom_appbar.dart';
-import '../../shopping_cart/services/cart_service.dart';
+import 'package:procdev/widgets/custom_appbar.dart';
+
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
 
@@ -20,13 +23,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     super.didChangeDependencies();
     final args = Get.arguments as Map<String, dynamic>;
     product = args['product'] as Product; // ✅ Cast to Product
-    allProducts = args['allProducts'] as List<Product>; // ✅ Cast to List<Product>
+    allProducts =
+        args['allProducts'] as List<Product>; // ✅ Cast to List<Product>
   }
 
   @override
   Widget build(BuildContext context) {
-    final relatedProducts =
-        allProducts.where((p) => p.id != product.id).toList(); // ✅ Use Product.id
+    final relatedProducts = allProducts
+        .where((p) => p.id != product.id)
+        .toList(); // ✅ Use Product.id
     final cartService = Provider.of<CartService>(context, listen: false);
 
     return Scaffold(
@@ -34,7 +39,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: Text(product.category ?? "",
+        title: Text(product.category ?? '',
             style: const TextStyle(color: Colors.pink)),
       ),
       body: Column(
@@ -171,8 +176,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         Text(
                                           "\$${item.price}",
                                           style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.pink),
+                                              fontSize: 14, color: Colors.pink),
                                         ),
                                       ],
                                     ),
@@ -198,21 +202,51 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             color: Colors.white,
             child: ElevatedButton(
               onPressed: () {
-                cartService.addItem({
-                  "id": product.id,
-                  "name": product.name,
-                  "price": product.price,
-                  "image": product.imageUrl,
-                  "description": product.description,
-                  "category": product.category,
-                  "quantity": 1,
-                });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Added to cart!")),
-                );
+                final authService =
+                    Provider.of<AuthService>(context, listen: false);
+                final cartService =
+                    Provider.of<CartService>(context, listen: false);
+                if (authService.isAuthenticated) {
+                  // --- IF LOGGED IN: Add the item to the cart ---
+                  cartService.addItem({
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "image": product.imageUrl,
+                    "description": product.description,
+                    "category": product.category,
+                    "quantity": 1,
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Added to cart!")),
+                  );
+                } else {
+                  Get.snackbar(
+                    'Login Required',
+                    'You need to be logged in to add items to your cart.',
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                  Get.toNamed(AppRoute.login);
+                }
               },
-              child: const Text("Add to Cart"),
+              style: ElevatedButton.styleFrom(
+                // backgroundColor is the color of the button itself.
+                backgroundColor: Colors.pink,
+
+                // You can also set other properties like padding and shape here
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(12), // Example: rounded corners
+                ),
+              ),
+              child: Text(
+                "addToCart".tr,
+                style: TextStyle(
+                  color: Colors.white, // This will make the text white
+                  fontSize: 15, // Example: make the font a bit bigger
+                ),
+              ),
             ),
           ),
         ],

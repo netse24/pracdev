@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import '../../../models/product.dart';
+import 'package:procdev/models/product.dart';
 import 'package:flutter/material.dart';
-import '../../../config/app_routes.dart';
-import '../../../database/product_database.dart';
+import 'package:procdev/config/app_routes.dart';
+import 'package:procdev/database/product_database.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -64,7 +64,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               children: const [
                 Text(
                   "Online B.U.T Store",
-                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.pink, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "Beauty with Us",
@@ -146,16 +147,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)],
+          boxShadow: [
+            BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.asset(
-                  product.imageUrl.isNotEmpty ? product.imageUrl : 'assets/images/default.png',
+                  product.imageUrl.isNotEmpty
+                      ? product.imageUrl
+                      : 'assets/images/default.png',
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
@@ -166,9 +172,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(product.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Text('\$${product.price}', style: const TextStyle(fontSize: 16, color: Colors.pink)),
+                  Text('\$${product.price}',
+                      style: const TextStyle(fontSize: 16, color: Colors.pink)),
                 ],
               ),
             ),

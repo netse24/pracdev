@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../database/cart_database.dart';
+import 'package:procdev/database/cart_database.dart';
 
 class CartService extends ChangeNotifier {
   List<Map<String, dynamic>> _cartItems = [];
 
   List<Map<String, dynamic>> get cartItems => _cartItems;
+
+  int get itemCount => _cartItems.length;
 
   CartService() {
     _loadCart();
@@ -16,8 +18,16 @@ class CartService extends ChangeNotifier {
   }
 
   Future<void> addItem(Map<String, dynamic> newItem) async {
-    await CartDatabase.instance.insertItem(newItem);
-    await _loadCart(); // refresh cart items from DB
+    final existingItemIndex =
+        _cartItems.indexWhere((item) => item['id'] == newItem['id']);
+
+    if (existingItemIndex != -1) {
+      await increaseQuantity(newItem['id']);
+    } else {
+      // If item is new, insert it into the database
+      await CartDatabase.instance.insertItem(newItem);
+      await _loadCart(); // Refresh cart items from DB
+    }
   }
 
   Future<void> removeItem(int id) async {
@@ -41,8 +51,12 @@ class CartService extends ChangeNotifier {
     final item = _cartItems.firstWhere((item) => item['id'] == id);
     int newQuantity = (item['quantity'] as int) - 1;
     if (newQuantity < 1) newQuantity = 1;
-    await CartDatabase.instance.updateQuantity(id, newQuantity);
-    await _loadCart();
+    if (newQuantity < 1) {
+      await removeItem(id);
+    } else {
+      await CartDatabase.instance.updateQuantity(id, newQuantity);
+      await _loadCart();
+    }
   }
 
   double totalPrice() {

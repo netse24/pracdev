@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../../../config/app_routes.dart';
+import 'package:procdev/config/app_routes.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -28,7 +28,7 @@ class SplashScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFF275A7), // Pink color
+                color: Colors.pink, // Pink color
                 letterSpacing: 1.2,
               ),
             ),
@@ -49,12 +49,12 @@ class SplashScreen extends StatelessWidget {
                     text: "Online B.U.T Store.",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFF275A7),
+                      color: Colors.pink,
                     ),
                   ),
                   TextSpan(
                     text:
-                        " We are thrilled to have you here and truly appreciate your visit. Whether you are exploring our products, looking for information, or just browsing, we hope you have a great experience.",
+                        "We are thrilled to have you here and truly appreciate your visit. Whether you are exploring our products, looking for information, or just browsing, we hope you have a great experience.",
                   ),
                 ],
               ),
@@ -71,7 +71,7 @@ class SplashScreen extends StatelessWidget {
                   Get.offNamed(AppRoute.main);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF275A7), // Pink button
+                  backgroundColor: Colors.pink, // Pink button
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import '../../../models/product.dart';
 import 'package:flutter/material.dart';
-import '../../../config/app_routes.dart';
+import 'package:procdev/models/product.dart';
+import 'package:procdev/config/app_routes.dart';
 import 'package:procdev/database/product_database.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -80,7 +80,8 @@ class _NewsScreenState extends State<NewsScreen> {
               children: const [
                 Text(
                   "Online B.U.T Store",
-                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.pink, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "Beauty with Us",
@@ -118,12 +119,16 @@ class _NewsScreenState extends State<NewsScreen> {
                     });
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: const [
-                        BoxShadow(color: Colors.black12, blurRadius: 6, spreadRadius: 3)
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            spreadRadius: 3)
                       ],
                     ),
                     child: Column(
@@ -132,7 +137,8 @@ class _NewsScreenState extends State<NewsScreen> {
                         Expanded(
                           flex: 5,
                           child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(20)),
                             child: Image.asset(
                               product.imageUrl.isNotEmpty
                                   ? product.imageUrl
@@ -152,7 +158,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                 Text(
                                   product.name,
                                   style: const TextStyle(
-                                      fontSize: 18, fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(

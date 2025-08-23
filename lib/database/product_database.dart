@@ -1,5 +1,5 @@
 import 'package:path/path.dart';
-import '../models/product.dart';
+import 'package:procdev/models/product.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 

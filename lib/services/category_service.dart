@@ -1,5 +1,5 @@
-import '../models/category.dart';
 import 'package:flutter/material.dart';
+import 'package:procdev/models/category.dart';
 // ====================================================================
 // File: lib/services/category_service.dart
 // Service to fetch category data.
