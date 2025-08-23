@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'database/product_database.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'features/products/services/product_service.dart';
 import 'features/shopping_cart/services/cart_service.dart';
-
 // ================= Theme Service =================
 class ThemeService {
   final _box = GetStorage();
@@ -32,13 +31,21 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize sqflite for Windows/Linux/macOS
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
 
   // Initialize Firebase (uncomment when firebase_options.dart is available)
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
+  // Initialize GetStorage for theme persistence
+  await GetStorage.init();
+
+  // Initialize sqflite for Windows/Linux/macOS
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
   // Initialize SQLite database
   await ProductDatabase.instance.init();
